@@ -1,5 +1,28 @@
 # ThresholdAndSegment
 自动阈值提取及分割的算法合集：目前已更新的8种算法
+## 快速食用方法
+### 求灰度图像的阈值
+fig=imread('cameraman.tif');
+figgray=rgb2gray(fig);
+MethodName='Cluster_Kittler';
+T=Cluster_treshold(reshape(double(figgray),[],1),'Method',MethodName);
+MethodName为自动阈值分割方法包括：'Cluster_Jawahar1','Cluster_Jawahar2','Cluster_Lloyd','Cluster_Ostu',
+    'Cluster_Kittler','Cluster_EM','Entropy_Kapur','Entropy_Yen'。
+### 图像分割
+#### 基于单阈值的图像分割
+T_K=Cluster_treshold(reshape(double(figgray),[],1),'Method','Cluster_Kittler');
+CM=zeros(size(figgray));CM(figgray>T_K)=1;
+figure,imshow(CM);title(['Cluster_Kittler分割方法']);
+#### 基于阈值表面的图像分割
+[P_new,label]=Local_Yanowitz(figgray,hsize,MaxInterNum,InterTreshhold,GradTresh);
+可调节参数包括：
+hsize 平滑滤波窗口，默认值是[3,3]
+MaxInterNum 迭代的最大次数，默认值1000
+InterTreshhold 迭代停止的阈值10e-6
+GradTresh 前景和背景的阈值，默认值是20
+
+#### 基于形态学分水岭的图像分割
+
 ## Local_Yanowitz
 由于光照的影响，图像的灰度可能是不均匀分布的，此时单一阈值的方法分割效果不好。Yanowitz提出了一种局部阈值分割方法。结合边缘和灰度信息找到阈值表面（treshhold surface）。在阈值表面上的就是目标。
 ![](https://gitee.com/ailuoboling/ImageforPrin/raw/master/%E9%98%88%E5%80%BC%E5%88%86%E5%89%B2%E5%8D%9A%E5%AE%A2%E5%9B%BE/Yanowitz_treshholdsurface.png)
