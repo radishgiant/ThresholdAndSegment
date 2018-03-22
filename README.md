@@ -6,7 +6,10 @@ fig=imread('cameraman.tif');
 figgray=rgb2gray(fig);
 MethodName='Cluster_Kittler';
 T=Cluster_treshold(reshape(double(figgray),[],1),'Method',MethodName);
-MethodName为自动阈值分割方法包括：'Cluster_Jawahar1','Cluster_Jawahar2','Cluster_Lloyd','Cluster_Ostu',
+
+MethodName为自动阈值分割方法包括：
+
+'Cluster_Jawahar1','Cluster_Jawahar2','Cluster_Lloyd','Cluster_Ostu',
     'Cluster_Kittler','Cluster_EM','Entropy_Kapur','Entropy_Yen'。
 ### 图像分割
 #### 基于单阈值的图像分割
