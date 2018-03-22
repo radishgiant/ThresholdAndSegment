@@ -2,25 +2,31 @@
 自动阈值提取及分割的算法合集：目前已更新的8种算法
 ## 快速食用方法
 ### 求灰度图像的阈值
+```
 fig=imread('cameraman.tif');
 figgray=rgb2gray(fig);
 MethodName='Cluster_Kittler';
 T=Cluster_treshold(reshape(double(figgray),[],1),'Method',MethodName);
+```
 MethodName为自动阈值分割方法包括：
 'Cluster_Jawahar1','Cluster_Jawahar2','Cluster_Lloyd','Cluster_Ostu',
 'Cluster_Kittler','Cluster_EM','Entropy_Kapur','Entropy_Yen'。
 ### 图像分割
 #### 基于单阈值的图像分割
+```
 T_K=Cluster_treshold(reshape(double(figgray),[],1),'Method','Cluster_Kittler');
 CM=zeros(size(figgray));CM(figgray>T_K)=1;
 figure,imshow(CM);title(['Cluster_Kittler分割方法']);
+```
 #### 基于阈值表面的图像分割
+```
 [P_new,label]=Local_Yanowitz(figgray,hsize,MaxInterNum,InterTreshhold,GradTresh);
+```
 可调节参数包括：
-hsize 平滑滤波窗口，默认值是[3,3]
-MaxInterNum 迭代的最大次数，默认值1000
-InterTreshhold 迭代停止的阈值10e-6
-GradTresh 前景和背景的阈值，默认值是20
+1. hsize 平滑滤波窗口，默认值是[3,3]
+2. MaxInterNum 迭代的最大次数，默认值1000
+3. InterTreshhold 迭代停止的阈值10e-6
+4. GradTresh 前景和背景的阈值，默认值是20
 
 #### 基于形态学分水岭的图像分割
 
@@ -34,11 +40,11 @@ GradTresh 前景和背景的阈值，默认值是20
 ![](https://gitee.com/ailuoboling/ImageforPrin/raw/master/%E9%98%88%E5%80%BC%E5%88%86%E5%89%B2%E5%8D%9A%E5%AE%A2%E5%9B%BE/Laplcian%E7%AE%97%E5%AD%90.jpg)
 - step4 ：采样候选点，灰度值替换。将平滑图像中的候选点灰度值替换为原始图像中的灰度值或者更大一点的值。这么做的目的是不会检测到虚假目标，因而会损失一部分真实的目标。
 - step5：插值灰度点，得到阈值表面。
-```math
+$$
 lim_{n \to \infty}P_n(x,y)=P_{n-1}(x,y)+\frac{\beta\cdot R_n(x,y)}{4}
 
 R(x,y)=P(x,y+1)+P(x,y-1)+P(x-1,y)+P(x+1,y)-4P(x,y)
-```
+$$
 其中，只有当`$\beta=0$`时，残差消失(residual vanish)。`$1< \beta <2$`时收敛更快。`$R(x,y)$`为拉普拉斯算子，强迫任意点`$R(x,y)=0$`的几何意义是使得曲线光滑。光滑曲线的梯度是连续变化的，因而其二次导数为0。
 - step6：阈值表面分割图像
 - step7：校正。由于光照和噪声，阈值表面和原始原始灰度曲线可能相交如下图所示。可以看到分割结果中出现 “ghost” 目标，应该予以去除。去除的原理是，这些虚假的目标边缘梯度值应该较小。因而，可以根据分割的结果，标记所有连通区域，注意背景和目标应该分开标记。比较标记部分边缘在梯度图中的值，如果某个目标的边缘梯度的平均值不超过某个阈值，则去除这个目标。
